@@ -5,30 +5,27 @@ using UnityEngine;
 public class PasswordCompiler : MonoBehaviour
 {
     // Start is called before the first frame update
+    int[] password = new int[7];
+    int currentDirection = 0;
+
     void Start()
     {
-        int[] arr = { 0, 0, 0, 0, 0, 0, 0 };
-        int[] arr2 = { 7, 7, 7, 7, 7, 7, 7 };
-        long p1, p2;
-        p1 = EncodePassword(arr);
-        p2 = EncodePassword(arr2);
-        print(EncodePassword(arr));
-        print(EncodePassword(arr2));
-        print(DecodePassword(p1) == arr);
-       print(DecodePassword(p2) == arr2);
+     
 
     }
 
     void Update()
     {
-        
+
     }
 
 
-    long EncodePassword(int[] pass) {
-        long passCode=0;
-        for (int i = 0; i < pass.Length; i++) {
-            passCode += (long)(Mathf.Pow(8, (pass.Length-i-1)))*pass[i];
+    long EncodePassword(int[] pass)
+    {
+        long passCode = 0;
+        for (int i = 0; i < pass.Length; i++)
+        {
+            passCode += (long)(Mathf.Pow(8, (pass.Length - i - 1))) * pass[i];
         }
         return passCode;
     }
@@ -40,21 +37,38 @@ public class PasswordCompiler : MonoBehaviour
         {
             long cur = (long)(Mathf.Pow(8, (pass.Length - i - 1)));
             pass[i] = (int)(passCode / cur);
-            passCode -= cur*pass[i];
+            passCode -= cur * pass[i];
         }
         for (int i = 0; i < pass.Length; i++)
             print(pass[i]);
         return pass;
     }
 
-    void SearchMatches(int[] pass) {
+    void SearchMatches(int[] pass)
+    {
         //create hashmap object
     }
 
-    void AddPassword(string domain, int[] pass) {
+    void AddPassword(string domain, int[] pass)
+    {
         //add to hasmap
     }
 
+    public void DirectionChosen(int i)
+    {
+        if (currentDirection == 7)
+        {
+            for (int j = 0; j < 7; j++)
+                print(password[j]);
+        }
+        else if (currentDirection < 7)
+        {
+            password[currentDirection] = i;
+            currentDirection++;
+        }
+
+        
+    }
 
 
 }
