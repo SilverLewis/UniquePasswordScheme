@@ -2,23 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PasswordCompiler : MonoBehaviour
+public class PasswordHolder : MonoBehaviour
 {
-    // Start is called before the first frame update
-    int[] password = new int[7];
-    int currentDirection = 0;
+    Dictionary<string, long> password = new Dictionary<string, long>();
 
-    void Start()
+    int noDomain = 0;
+
+    public void AddPassword(string domain, int[] pass)
     {
-     
-
+        long codedPass = EncodePassword(pass);
+        password.Add(domain, codedPass);
     }
-
-    void Update()
-    {
-
-    }
-
 
     long EncodePassword(int[] pass)
     {
@@ -44,31 +38,8 @@ public class PasswordCompiler : MonoBehaviour
         return pass;
     }
 
-    void SearchMatches(int[] pass)
-    {
-        //create hashmap object
+    public long GetPassword(string domain) {
+        return password[domain];
     }
-
-    void AddPassword(string domain, int[] pass)
-    {
-        //add to hasmap
-    }
-
-    public void DirectionChosen(int i)
-    {
-        if (currentDirection == 7)
-        {
-            for (int j = 0; j < 7; j++)
-                print(password[j]);
-        }
-        else if (currentDirection < 7)
-        {
-            password[currentDirection] = i;
-            currentDirection++;
-        }
-
-        
-    }
-
-
+    
 }
