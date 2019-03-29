@@ -5,5 +5,5 @@ using UnityEngine;
 public class Arrow
 {
     public int rotation;
-    public Color color;s
+    public Color color;
 }

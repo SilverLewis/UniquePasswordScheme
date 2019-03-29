@@ -14,6 +14,11 @@ public class PasswordHolder : MonoBehaviour
         password.Add(domain, codedPass);
     }
 
+    private void AddPassword(string domain, int pass)
+    {
+        password.Add(domain, pass);
+    }
+
     long EncodePassword(int[] pass)
     {
         long passCode = 0;
@@ -33,13 +38,17 @@ public class PasswordHolder : MonoBehaviour
             pass[i] = (int)(passCode / cur);
             passCode -= cur * pass[i];
         }
-        for (int i = 0; i < pass.Length; i++)
-            print(pass[i]);
         return pass;
     }
 
-    public long GetPassword(string domain) {
-        return password[domain];
+    public int[] GetPassword(string domain) {
+        return DecodePassword(password[domain]);
+    }
+
+    public bool CheckLogin(string domain, int[] arr) {
+        if (password[domain] == EncodePassword(arr))
+            return true;
+        return false;
     }
     
 }
