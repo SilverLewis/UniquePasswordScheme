@@ -5,78 +5,50 @@ using UnityEngine;
 
 public class PasswordCompiler : MonoBehaviour
 {
-    // Start is called before the first frame update
-    int passwordLength = 7; 
 
-    int[] password;
-    int currentDirection = 0;
     public PasswordHolder passHolder;
     public ViewManager view;
-    int[] randomPassword;
+    public int stage = 0;
 
-    int stage = 0;
     string[] example = {"Bank", "Email", "Carleton" };
-
-    int screenCount = 0;
+    int[] order = new int[3];
 
     private void Start()
     {
-        password = new int[passwordLength];
-        randomPassword = new int[passwordLength];
+        for(int i=0;i<order.Length;i++)
+            order[i] = i;
+        RandomOrder(order);
+
+        for (int i = 0; i < order.Length; i++)
+            print(order[i]);
 
         CreateExample();
         NextScreen();
     }
 
-
-    private void Update()
-    {
-        if (Input.anyKey)
-        {
-            if (stage%2==0&&stage<6)
-            {
-                print("here?");
-                stage++;
-                NextScreen();
-            }
-        }
-    }
-
-
     private void CreateExample()
     {
-        int[] newPassword = new int[passwordLength];
+        int[] newPassword = new int[StaticVariables.passwordLength];
         for (int i = 0; i < example.Length; i++)
         {
             for (int j = 0; j < newPassword.Length; j++)
-                newPassword[j] = Random.Range(0, 8);
+                newPassword[j] = Random.Range(0, StaticVariables.passwordOptions);
             AddPassword(example[i], newPassword);
         }
     }
 
-    void NextScreen()
-    {
-        print("here");
-        //will only get in here at 1,3,5
-        if (stage < 6 && currentDirection == passwordLength - 1) {
-
-            PrintRealPassword();
-            PrintEnteredPassword();
-
-            //entered correct password
-            if (passHolder.CheckLogin(example[(int)Mathf.Floor(stage / 2)], password))
-            {
-                print("correct");
-                stage++;
-            }
-            //reshows password
-            else
-            {
-                print("idiot");
-                stage--;
-            }
+    private void RandomOrder(int[] order) {
+        for(int i=0;i<order.Length;i++)
+        {
+            int k = Random.Range(0, order.Length-1);
+            int value = order[k];
+            order[k] = order[i];
+            order[i] = value;
         }
+    }
 
+    public void NextScreen()
+    {
         switch (stage) {
             case 0:
             case 2:
@@ -89,9 +61,38 @@ public class PasswordCompiler : MonoBehaviour
             case 5:
                 view.EnterPassword(example[(int)Mathf.Floor(stage/2)]);
                 break;
+            case 6:
+            case 7:
+            case 8:
+                break;
+            case 9:
+                break;
+            default:
+                print("hit default and I shouldnt be here");
+                break;
+            
         }
     }
 
+    public void CheckPassword(int[] enteredPassword) {
+        if (stage < 6 && stage % 2 == 1)
+        {
+            //entered correct password
+            if (passHolder.CheckLogin(example[(int)Mathf.Floor(stage / 2)], enteredPassword))
+            {
+                print("correct");
+                stage++;
+                NextScreen();
+            }
+            //reshows password
+            else
+            {
+                print("idiot");
+                stage--;
+                NextScreen();
+            }
+        }
+    }
     
     void AddPassword(string domain, int[] pass)
     {
@@ -107,23 +108,7 @@ public class PasswordCompiler : MonoBehaviour
         return passHolder.GetPassword((domain));
     }
 
-    public void DirectionChosen(int i)
-    {
-        if (currentDirection == passwordLength-1)
-        {
-            password[currentDirection] = i;
-            NextScreen();
-            currentDirection = 0;
-
-        }
-        else if (currentDirection < passwordLength - 1)
-        {
-            password[currentDirection] = i;
-            currentDirection++;
-        }
-    }
-
-    void PrintRealPassword() {
+    public void PrintRealPassword() {
        int [] a = GetPassword(example[(int)Mathf.Floor(stage / 2)]);
         string real="";
         for (int i = 0; i < a.Length; i++)
@@ -132,16 +117,4 @@ public class PasswordCompiler : MonoBehaviour
         }
         print("real: " + real);
     }
-    void PrintEnteredPassword()
-    {
-        int[] a =password;
-        string fake = "";
-        for (int i = 0; i < a.Length; i++)
-        {
-            fake += a[i];
-        }
-        print("fake: " + fake);
-    }
-
-
 }

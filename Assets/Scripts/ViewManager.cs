@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class ViewManager : MonoBehaviour
 {
-    Arrow[] arrows = new Arrow[8];
-    public Image[] instructArrows = new Image[7];
+    Arrow[] arrows;
+    public Image[] instructArrows;
     public Text passDomain;
     public Text arrowPassDomain;
 
@@ -14,6 +14,7 @@ public class ViewManager : MonoBehaviour
 
     void Start()
     {
+        arrows = new Arrow[StaticVariables.passwordOptions];
         InitiateArrows();
     }
 
