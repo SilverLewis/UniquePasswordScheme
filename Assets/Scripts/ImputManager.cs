@@ -5,7 +5,7 @@ using UnityEngine;
 public class ImputManager : MonoBehaviour
 {
     int[] password;
-    public PasswordCompiler manager;
+    public StateManager manager;
     int passwordPlace = 0;
 
     private void Start()

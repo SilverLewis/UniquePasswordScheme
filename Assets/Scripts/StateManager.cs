@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class PasswordCompiler : MonoBehaviour
+public class StateManager : MonoBehaviour
 {
 
     public PasswordHolder passHolder;
     public ViewManager view;
+    public StatLogger log;
+
     public int stage = 0;
     public int wrongPassword;
     bool previousAttempt;
@@ -71,6 +73,7 @@ public class PasswordCompiler : MonoBehaviour
             case 3:
             case 5:
                 view.EnterPassword(example[(int)Mathf.Floor(stage/2)], true,-1);
+                log.StartTimer();
                 break;
             case 6:
             case 7:
@@ -80,6 +83,7 @@ public class PasswordCompiler : MonoBehaviour
                 break;
             case 9:
                 view.EndScreen();
+                log.PrintLog();
                 break;
             default:
                 print("hit default and I shouldnt be here");
@@ -105,6 +109,7 @@ public class PasswordCompiler : MonoBehaviour
                 previousAttempt = false;
                 NextScreen();
             }
+            log.EndTimer(previousAttempt);
         }
         else if(stage<9)
         {
@@ -113,17 +118,19 @@ public class PasswordCompiler : MonoBehaviour
                 stage++;
                 wrongPassword = 0;
                 previousAttempt = true;
+                log.EndTimer(previousAttempt);
                 NextScreen();
             }
             else{
                 wrongPassword++;
+                previousAttempt = false;
+                log.EndTimer(previousAttempt);
                 if (wrongPassword >= 3)
                 {
                     wrongPassword = 0;
                     previousAttempt = true;
                     stage++;
                 }
-                previousAttempt = false;
                 NextScreen();
             }
         }

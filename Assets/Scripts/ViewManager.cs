@@ -12,7 +12,7 @@ public class ViewManager : MonoBehaviour
 
     public GameObject arrowScreen, InstructionScreen;
 
-    void Start()
+    void Awake()
     {
         arrows = new Arrow[StaticVariables.passwordOptions];
         InitiateArrows();
