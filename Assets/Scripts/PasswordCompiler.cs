@@ -9,21 +9,33 @@ public class PasswordCompiler : MonoBehaviour
     public PasswordHolder passHolder;
     public ViewManager view;
     public int stage = 0;
+    public int wrongPassword;
+    bool previousAttempt;
 
     string[] example = {"Bank", "Email", "Carleton" };
     int[] order = new int[3];
 
     private void Start()
     {
+        previousAttempt = true;
+
         for(int i=0;i<order.Length;i++)
             order[i] = i;
         RandomOrder(order);
 
-        for (int i = 0; i < order.Length; i++)
-            print(order[i]);
-
-        CreateExample();
+       // CreateExample();
+        CreateDevExample();
         NextScreen();
+    }
+
+    private void CreateDevExample() {
+        int[] newPassword = new int[StaticVariables.passwordLength];
+        for (int i = 0; i < example.Length; i++)
+        {
+            for (int j = 0; j < newPassword.Length; j++)
+                newPassword[j] = 0;
+            AddPassword(example[i], newPassword);
+        }
     }
 
     private void CreateExample()
@@ -53,19 +65,21 @@ public class PasswordCompiler : MonoBehaviour
             case 0:
             case 2:
             case 4:
-                print("getting password: "+stage / 2);
-                view.ShowPassword(example[stage/2], GetPassword(example[stage/2]));
+                view.ShowPassword(example[stage/2], GetPassword(example[stage/2]), previousAttempt);
                 break;
             case 1:
             case 3:
             case 5:
-                view.EnterPassword(example[(int)Mathf.Floor(stage/2)]);
+                view.EnterPassword(example[(int)Mathf.Floor(stage/2)], true,-1);
                 break;
             case 6:
             case 7:
             case 8:
+                print("prev: " + previousAttempt);
+                view.EnterPassword(example[order[stage - 6]], previousAttempt,3-wrongPassword);
                 break;
             case 9:
+                view.EndScreen();
                 break;
             default:
                 print("hit default and I shouldnt be here");
@@ -80,18 +94,40 @@ public class PasswordCompiler : MonoBehaviour
             //entered correct password
             if (passHolder.CheckLogin(example[(int)Mathf.Floor(stage / 2)], enteredPassword))
             {
-                print("correct");
                 stage++;
+                previousAttempt = true;
                 NextScreen();
             }
             //reshows password
             else
             {
-                print("idiot");
                 stage--;
+                previousAttempt = false;
                 NextScreen();
             }
         }
+        else if(stage<9)
+        {
+            print("checking Password");
+            if (passHolder.CheckLogin(example[order[stage - 6]], enteredPassword)) {
+                stage++;
+                wrongPassword = 0;
+                previousAttempt = true;
+                NextScreen();
+            }
+            else{
+                wrongPassword++;
+                if (wrongPassword >= 3)
+                {
+                    wrongPassword = 0;
+                    previousAttempt = true;
+                    stage++;
+                }
+                previousAttempt = false;
+                NextScreen();
+            }
+        }
+        
     }
     
     void AddPassword(string domain, int[] pass)
@@ -99,17 +135,17 @@ public class PasswordCompiler : MonoBehaviour
         passHolder.AddPassword(domain, pass);
     }
 
-    void AddPassword(int[] pass)
-    {
-        passHolder.AddPassword("test", pass);
-    }
-
     int[] GetPassword(string domain) {
         return passHolder.GetPassword((domain));
     }
 
     public void PrintRealPassword() {
-       int [] a = GetPassword(example[(int)Mathf.Floor(stage / 2)]);
+        int[] a;
+        if (stage<6)
+            a = GetPassword(example[(int)Mathf.Floor(stage / 2)]);
+        else
+            a = GetPassword(example[order[stage - 6]]);
+
         string real="";
         for (int i = 0; i < a.Length; i++)
         {
@@ -117,4 +153,5 @@ public class PasswordCompiler : MonoBehaviour
         }
         print("real: " + real);
     }
+
 }

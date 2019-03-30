@@ -38,20 +38,40 @@ public class ViewManager : MonoBehaviour
             arrows[i].rotation = 45 * i;
     }
 
-    public void ShowPassword(string domain, int[] password)
+    public void ShowPassword(string domain, int[] password, bool correct)
     {
         arrowScreen.SetActive(false);
         InstructionScreen.SetActive(true);
         SetArrows(password);
-        passDomain.text = "Your "+domain + "'s password is:";
+  
+        if (correct)
+            passDomain.text = "Your "+domain + "'s password is:";
+        else
+            passDomain.text = "Wrong Password!\nYour " + domain + "'s password is:";
+
+
     }
 
-    public void EnterPassword(string domain)
+    public void EnterPassword(string domain, bool correct, int AttemptsRemaining)
     {
         arrowScreen.SetActive(true);
         InstructionScreen.SetActive(false);
-        arrowPassDomain.text = "Please enter your " + domain + "'s password";
+
+       arrowPassDomain.text = "Your " + domain + "'s password is:";
+
+        if(AttemptsRemaining>0)
+            arrowPassDomain.text += "\nYou have " + AttemptsRemaining + " remaining";
+
+        if (!correct)
+            arrowPassDomain.text += "\nWrong Password!";
     }
+
+    public void EndScreen()
+    {
+        arrowScreen.SetActive(false);
+        InstructionScreen.SetActive(true);
+    }
+
 
     private void SetArrows(int[] chosen)
     {
