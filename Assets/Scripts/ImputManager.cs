@@ -6,7 +6,9 @@ public class ImputManager : MonoBehaviour
 {
     int[] password;
     public StateManager manager;
+    public BallMover ball;
     int passwordPlace = 0;
+
 
     //runs on creation
     private void Start()
@@ -31,6 +33,9 @@ public class ImputManager : MonoBehaviour
     //gets input from button, each button corisponds from a number 0-7
     public void DirectionChosen(int i)
     {
+        //moves ball in the center
+        if(ball!=null)
+            ball.Direction(i);
         //adds button chosen to password entered
         password[passwordPlace] = i;
 

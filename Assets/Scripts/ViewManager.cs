@@ -29,7 +29,7 @@ public class ViewManager : MonoBehaviour
         arrows[0].color = Color.white;
         arrows[1].color = Color.yellow;
         arrows[2].color = Color.green;
-        arrows[3].color = Color.black;
+        arrows[3].color = new Color(.226f, .198f, .198f);//offset of black so it doesnt match outline
         arrows[4].color = Color.grey;
         arrows[5].color = Color.blue;
         arrows[6].color = Color.red;

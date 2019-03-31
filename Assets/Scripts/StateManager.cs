@@ -28,8 +28,8 @@ public class StateManager : MonoBehaviour
         RandomOrder(order);
 
         //creates passwords
-       //CreateExample();
-        CreateDevExample();
+       CreateExample();
+       //CreateDevExample();
 
         //sets UI
         NextScreen(0);
