@@ -17,19 +17,25 @@ public class StateManager : MonoBehaviour
     string[] example = {"Bank", "Email", "Carleton" };
     int[] order = new int[3];
 
+    //runs on start of program
     private void Start()
     {
         previousAttempt = true;
 
+        //gets random order for second half of assignment
         for(int i=0;i<order.Length;i++)
             order[i] = i;
         RandomOrder(order);
 
-       // CreateExample();
+        //creates passwords
+       //CreateExample();
         CreateDevExample();
-        NextScreen();
+
+        //sets UI
+        NextScreen(0);
     }
 
+    //creates passwords of ONLY 0's for testing purposes
     private void CreateDevExample() {
         int[] newPassword = new int[StaticVariables.passwordLength];
         for (int i = 0; i < example.Length; i++)
@@ -39,7 +45,7 @@ public class StateManager : MonoBehaviour
             AddPassword(example[i], newPassword);
         }
     }
-
+    //creates random passwords;
     private void CreateExample()
     {
         int[] newPassword = new int[StaticVariables.passwordLength];
@@ -51,6 +57,7 @@ public class StateManager : MonoBehaviour
         }
     }
 
+    //randomizes given array;
     private void RandomOrder(int[] order) {
         for(int i=0;i<order.Length;i++)
         {
@@ -61,27 +68,34 @@ public class StateManager : MonoBehaviour
         }
     }
 
-    public void NextScreen()
+    //crux of class, determines UI based on varable Stage
+    public void NextScreen(int stageChange)
     {
+        //sees if stage was changed
+        stage += stageChange;
+
         switch (stage) {
+            //assign password screens
             case 0:
             case 2:
             case 4:
                 view.ShowPassword(example[stage/2], GetPassword(example[stage/2]), previousAttempt);
                 break;
+            //re-submit CORRECTLY the assigned passwords
             case 1:
             case 3:
             case 5:
                 view.EnterPassword(example[(int)Mathf.Floor(stage/2)], true,-1);
                 log.StartTimer();
                 break;
+            //Have 3 tries to get correct password;
             case 6:
             case 7:
             case 8:
-                print("prev: " + previousAttempt);
                 view.EnterPassword(example[order[stage - 6]], previousAttempt,3-wrongPassword);
                 log.StartTimer();
                 break;
+                //end game and export to Excel File
             case 9:
                 view.EndScreen();
                 log.ExportLog();
@@ -93,49 +107,53 @@ public class StateManager : MonoBehaviour
         }
     }
 
+    //checks if password obtained by InputManager is correct
     public void CheckPassword(int[] enteredPassword) {
+        //in assigning and resubmitting screens
         if (stage < 6 && stage % 2 == 1)
         {
             //entered correct password
             if (passHolder.CheckLogin(example[(int)Mathf.Floor(stage / 2)], enteredPassword))
             {
-                stage++;
                 previousAttempt = true;
-                NextScreen();
+                NextScreen(1);
             }
             //reshows password
             else
             {
-                stage--;
                 previousAttempt = false;
-                NextScreen();
+                NextScreen(-1);
             }
             log.EndTimer(previousAttempt);
         }
+        //in recall password within 3 attemps screens
         else if(stage<9)
         {
-            print("checking Password");
+            //if entered correct password
             if (passHolder.CheckLogin(example[order[stage - 6]], enteredPassword)) {
-                stage++;
                 wrongPassword = 0;
                 previousAttempt = true;
+                NextScreen(1);
                 log.EndTimer(previousAttempt);
-                NextScreen();
             }
+            //if entered incorrect password
             else{
                 wrongPassword++;
-                previousAttempt = false;
-                log.EndTimer(previousAttempt);
+                log.EndTimer(false);
+                //if entered 3 wrong passwords
                 if (wrongPassword >= 3)
                 {
                     wrongPassword = 0;
                     previousAttempt = true;
-                    stage++;
+                    NextScreen(1);
                 }
-                NextScreen();
+                //if not out of guesses
+                else {
+                    previousAttempt = false;
+                    NextScreen(0); 
+                }
             }
         }
-        
     }
     
     void AddPassword(string domain, int[] pass)

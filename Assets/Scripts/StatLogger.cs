@@ -16,21 +16,22 @@ public class StatLogger : MonoBehaviour
     int successes = 0;
     int fails = 0;
 
-
+    //runs at start of program
     private void Start()
     {
         date = DateTime.Now;
         print(date.ToString());
         SetUserId();
     }
-
+    //gives user random identity from 0-2^21
     public void SetUserId() {
         userID = UnityEngine.Random.Range(0, 2097152);
     }
+    //called when user is starting to enter password
     public void StartTimer() {
         startTime = Time.fixedTime;
     }
-
+    //called when user entered password, bool represents if it was correct or not
     public void EndTimer(bool fail) {
         times.Add(Time.fixedTime - startTime);
         failedlogin.Add(fail);
@@ -40,11 +41,11 @@ public class StatLogger : MonoBehaviour
             fails++;
     }
 
+    //exports to excel file
     public void ExportLog() {
-        List<string[]> rowData = new List<string[]>();
         string[] rowDataTemp;
 
-
+        //each index in array represents info to be placed in a respective collum
         rowDataTemp = new string[times.Count+4];
         rowDataTemp[0] = userID.ToString();
         rowDataTemp[1] = date.ToString();
@@ -59,15 +60,16 @@ public class StatLogger : MonoBehaviour
             rowDataTemp[i + 4] += times[i].ToString();
         }
 
-        rowData.Add(rowDataTemp);
-
-        string[][] output = new string[rowData.Count][];
-
+        //converts array into something System.io.file can read
+        //2 D array because 1D arrays would make every index be its own collum rather than own row
+        string[][] output = new string[1][];
+  
         for (int i = 0; i < output.Length; i++)
         {
-            output[i] = rowData[i];
+            output[0] = rowDataTemp;
         }
 
+        //outputs to excel
         int length = output.GetLength(0);
         string delimiter = ",";
 

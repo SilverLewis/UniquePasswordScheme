@@ -11,7 +11,8 @@ public class ViewManager : MonoBehaviour
     public Text arrowPassDomain;
 
     public GameObject arrowScreen, InstructionScreen;
-
+    
+    //runs on program start
     void Awake()
     {
         arrows = new Arrow[StaticVariables.passwordOptions];
@@ -19,7 +20,7 @@ public class ViewManager : MonoBehaviour
     }
 
     
-
+    //sets all the UI arrows that would spawn when user gets assigned password
     void InitiateArrows()
     {
         for (int i = 0; i < arrows.Length; i++)
@@ -38,12 +39,14 @@ public class ViewManager : MonoBehaviour
             arrows[i].rotation = 45 * i;
     }
 
+    //shows password assigning screen, manipulates UI by setting the pages to active (true) or inactive (false)
     public void ShowPassword(string domain, int[] password, bool correct)
     {
         arrowScreen.SetActive(false);
         InstructionScreen.SetActive(true);
         SetArrows(password);
   
+        //correct is if false if user re-entered the password incorrectly
         if (correct)
             passDomain.text = "Your "+domain + "'s password is:";
         else
@@ -52,6 +55,7 @@ public class ViewManager : MonoBehaviour
 
     }
 
+    //password entering screen, manipulates UI by setting the pages to active (true) or inactive (false)
     public void EnterPassword(string domain, bool correct, int AttemptsRemaining)
     {
         arrowScreen.SetActive(true);
@@ -59,22 +63,25 @@ public class ViewManager : MonoBehaviour
 
        arrowPassDomain.text = "Your " + domain + "'s password is:";
 
+        //if 0 doesnt show attempts left
         if(AttemptsRemaining>0)
             arrowPassDomain.text += "\nYou have " + AttemptsRemaining + " remaining";
-
+        //if last entry was wrong
         if (!correct)
             arrowPassDomain.text += "\nWrong Password!";
     }
 
+    //End Screen
     public void EndScreen()
     {
         arrowScreen.SetActive(false);
         InstructionScreen.SetActive(true);
     }
 
-
+    //converts password of integers to UI arrows that will be shown to screen when getting assigned a password
     private void SetArrows(int[] chosen)
     {
+        //each arrow in the assign password screen gets casted into one of the 8 preset arrows created in initiate arrows
         for (int i = 0; i < instructArrows.Length; i++)
         {
             instructArrows[i].color = arrows[chosen[i]].color;
