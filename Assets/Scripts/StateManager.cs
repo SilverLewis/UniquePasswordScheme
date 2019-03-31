@@ -80,10 +80,11 @@ public class StateManager : MonoBehaviour
             case 8:
                 print("prev: " + previousAttempt);
                 view.EnterPassword(example[order[stage - 6]], previousAttempt,3-wrongPassword);
+                log.StartTimer();
                 break;
             case 9:
                 view.EndScreen();
-                log.PrintLog();
+                log.ExportLog();
                 break;
             default:
                 print("hit default and I shouldnt be here");

@@ -30,10 +30,6 @@ public class ImputManager : MonoBehaviour
         if (passwordPlace == StaticVariables.passwordLength - 1)
         {
             password[passwordPlace] = i;
-
-            PrintEnteredPassword();
-            manager.PrintRealPassword();
-
             manager.CheckPassword(password);
             passwordPlace = 0;
 
