@@ -6,11 +6,13 @@ using UnityEngine.UI;
 public class ViewManager : MonoBehaviour
 {
     Arrow[] arrows;
-    public Image[] instructArrows;
+    public Image[] instructArrows, passwordEntered, PasswordExample;
     public Text passDomain;
     public Text arrowPassDomain;
+    public Text notification;
+    public Sprite arrow, noArrow;
+    public GameObject arrowScreen, InstructionScreen, GameOverScreen, PasswordCode;
 
-    public GameObject arrowScreen, InstructionScreen;
     
     //runs on program start
     void Awake()
@@ -39,29 +41,15 @@ public class ViewManager : MonoBehaviour
             arrows[i].rotation = 45 * i;
     }
 
-    //shows password assigning screen, manipulates UI by setting the pages to active (true) or inactive (false)
-    public void ShowPassword(string domain, int[] password, bool correct)
-    {
-        arrowScreen.SetActive(false);
-        InstructionScreen.SetActive(true);
-        SetArrows(password);
-  
-        //correct is if false if user re-entered the password incorrectly
-        if (correct)
-            passDomain.text = "Your "+domain + "'s password is:";
-        else
-            passDomain.text = "Wrong Password!\nYour " + domain + "'s password is:";
-
-
-    }
-
     //password entering screen, manipulates UI by setting the pages to active (true) or inactive (false)
-    public void EnterPassword(string domain, bool correct, int AttemptsRemaining)
+    public void EnterPassword(string domain, int[] password, bool showPassword, bool correct, int AttemptsRemaining)
     {
-        arrowScreen.SetActive(true);
-        InstructionScreen.SetActive(false);
+        ScreenController(0);
 
        arrowPassDomain.text = "Your " + domain + "'s password is:";
+
+        if (showPassword)
+            ShowPasswordArrows(password);
 
         //if 0 doesnt show attempts left
         if(AttemptsRemaining>0)
@@ -72,10 +60,10 @@ public class ViewManager : MonoBehaviour
     }
 
     //End Screen
-    public void EndScreen()
+    public void TextScreen(string text)
     {
-        arrowScreen.SetActive(false);
-        InstructionScreen.SetActive(true);
+        notification.text = text;
+        ScreenController(2);
     }
 
     //converts password of integers to UI arrows that will be shown to screen when getting assigned a password
@@ -89,5 +77,43 @@ public class ViewManager : MonoBehaviour
         }
     }
 
+    //controlls which screen is online
+    private void ScreenController(int i) {
+        arrowScreen.SetActive(0 == i);
+        InstructionScreen.SetActive(1 == i);
+        GameOverScreen.SetActive(2 == i);
+    }
+
+    private void ShowPasswordArrows(int[]password) {
+        for (int j = 0; j < StaticVariables.passwordLength; j++)
+        {
+            PasswordExample[j].sprite = arrow;
+            PasswordExample[j].color = arrows[password[j]].color;
+            PasswordExample[j].transform.rotation = Quaternion.Euler(0, 0, arrows[password[j]].rotation);
+        }
+    }
+
+    public void ShowEnteredArrows(int pass, int[] enteredCode)
+    {
+        for (int j = 0; j < StaticVariables.passwordLength; j++)
+        {
+            if (j < pass)
+            {
+                passwordEntered[j].sprite = arrow;
+                passwordEntered[j].color = arrows[enteredCode[j]].color;
+                passwordEntered[j].transform.rotation = Quaternion.Euler(0, 0, arrows[enteredCode[j]].rotation);
+            }
+            else
+            {
+                passwordEntered[j].sprite = noArrow;
+                passwordEntered[j].color = Color.white;
+                passwordEntered[j].transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
+        }
+    }
+
+    public void ShowPasswordCode(bool active) {
+        PasswordCode.SetActive(active);
+    }
 
 }
